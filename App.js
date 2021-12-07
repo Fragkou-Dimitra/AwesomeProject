@@ -80,7 +80,7 @@ const HomeScreen: () => Node = ({navigation}) => {
             Read the docs to discover what to do next:
           </Section>
           <LearnMoreLinks />
-          <Button onPress={() => navigation.navigate('My Tasks')} title="My Tasks"/>
+          <Button onPress={() => navigation.navigate('Tasks')} title="My Tasks"/>
         </View>
       </ScrollView>
     </SafeAreaView>
