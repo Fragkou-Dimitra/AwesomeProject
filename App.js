@@ -120,7 +120,7 @@ const Tasks:()=>Node=({navigation})=> {
   );
 }
 
-//const CheckedAsDone:()=>Node=()=>{item.status=='done'}
+
 
 const ToDoList:()=>Node=()=> {
   const [data,setData] = useState([]);
@@ -139,8 +139,7 @@ const ToDoList:()=>Node=()=> {
    }
  }
   );
-  const CheckedAsDone:()=>Node=()=>{{item.status='done'}}
-
+ 
   return (
     <View style={styles.listContainer}>
         {isLoading ? <ActivityIndicator/> : (
@@ -153,7 +152,7 @@ const ToDoList:()=>Node=()=> {
                 <Text style={styles.row_cell_status}>{item.status=='done'?
                 (<Text style={{color:'green'}}>done<Icon name="check"/></Text>):
                 (<Text style={{color:'red'}}>not done<Icon name="star"/>
-                   <Button onPress={()=>{CheckedAsDone()}} title='done'/>
+                   <Button onPress={()=>{item.status='done'}} title='done'/>
                 </Text>)}
                 </Text> 
               </View>
