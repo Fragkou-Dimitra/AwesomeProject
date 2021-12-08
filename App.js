@@ -24,6 +24,8 @@ import {
   Image,
   Button,
   FlatList,
+  TouchableRipple,
+  Switch
 } from 'react-native';
 
 import {
@@ -49,7 +51,7 @@ const Section = ({children, title}): Node => {
 
  
 
-const HomeScreen: () => Node = ({navigation}) => {
+const Home: () => Node = ({navigation}) => {
   const queryClient = new QueryClient();
   const isDarkMode = useColorScheme() === 'dark';
   const backgroundStyle = {
@@ -118,7 +120,7 @@ const Tasks:()=>Node=({navigation})=> {
   );
 }
 
-
+//const CheckedAsDone:()=>Node=()=>{item.status=='done'}
 
 const ToDoList:()=>Node=()=> {
   const [data,setData] = useState([]);
@@ -129,6 +131,7 @@ const ToDoList:()=>Node=()=> {
      const json = await response.json();
      
      setData(json.tasks);
+  
    } catch (error) {
      console.error(error);
    } finally {
@@ -136,18 +139,23 @@ const ToDoList:()=>Node=()=> {
    }
  }
   );
- 
+  const CheckedAsDone:()=>Node=()=>{{item.status='done'}}
+
   return (
     <View style={styles.listContainer}>
         {isLoading ? <ActivityIndicator/> : (
           <FlatList style={styles.flatListContainer}
             data={data}
-            keyExtractor={({ id }, index) => id}            
+            keyExtractor={({ id }, status) => {id}}            
             renderItem={({ item }) => (
-              
               <View style={styles.row}>
-                <View style={styles.row_cell_title}><Text style={styles.row_title}>{item.title}{' : '}</Text></View>
-                <Text style={styles.row_cell_status}>{item.status}</Text> 
+                <View style={styles.row_cell_title}><Text style={styles.row_title}>{item.title}{' : '}</Text></View>          
+                <Text style={styles.row_cell_status}>{item.status=='done'?
+                (<Text style={{color:'green'}}>done<Icon name="check"/></Text>):
+                (<Text style={{color:'red'}}>not done<Icon name="star"/>
+                   <Button onPress={()=>{CheckedAsDone()}} title='done'/>
+                </Text>)}
+                </Text> 
               </View>
             )}
           />
@@ -156,23 +164,16 @@ const ToDoList:()=>Node=()=> {
   )
 }
 
-
 const DrawerContent=(props):Node=> {
   
   return(
-      <View style={{flex:1}}>
+      <View style={{flex:1, backgroundColor:'black'}}>
           <DrawerContentScrollView {...props}>
               <View style={styles.drawerContent}>                
                       <DrawerItem 
-                          icon={({color, size}) => (
-                              <Icon 
-                              name="home-outline" 
-                              color={color}
-                              size={size}
-                              />
-                          )}
+                          icon={({color, size}) => ( <Icon name="home-outline" color={color} size={size} />)}
                           label="Home"
-                          onPress={() => {props.navigation.navigate('HomeScreen')}}
+                          onPress={() => {props.navigation.navigate('Home')}}
                       />
                       <DrawerItem 
                           icon={({color, size}) => (
@@ -199,7 +200,7 @@ const App:()=>Node=()=> {
   return (
     <NavigationContainer>
       <MyDrawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
-      <MyDrawer.Screen name="HomeScreen" component={HomeScreen} />
+      <MyDrawer.Screen name="Home" component={Home} />
       <MyDrawer.Screen name="Tasks" component={Tasks} />
     </MyDrawer.Navigator>
     </NavigationContainer>
@@ -231,6 +232,8 @@ const styles = StyleSheet.create({
   },
   drawerContent: {
     flex: 1,
+    backgroundColor:'white'
+
   },
    
   listContainer: {
