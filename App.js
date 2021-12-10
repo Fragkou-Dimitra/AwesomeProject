@@ -52,7 +52,21 @@ const SectionNews = ({children, title, subtitle}): Node => {
   );
 };
 
- 
+const User:()=>Node=()=> {
+  const { isLoading, error, data } = useQuery('name', () =>
+    fetch('https://my-json-server.typicode.com/Fragkou-Dimitra/demo/profile').then(res =>
+      res.json() 
+    )
+  )
+  if (isLoading) return <Text>'Loading...'</Text> 
+  if (error) return <Text>'An error has occurred: '  {error.message}</Text>
+  return (
+    <View>    
+      <Text h1>{data.name}{' '}</Text>
+      <Text style={{color:'blue'}}>{data.email}{' '}</Text>
+    </View>
+  )
+} 
 
 const Home: () => Node = ({navigation}) => {
   const queryClient = new QueryClient();
@@ -61,7 +75,7 @@ const Home: () => Node = ({navigation}) => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView style={backgroundStyle,{flex:1}}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
          <View style={styles.MyHeader}>
@@ -108,53 +122,19 @@ const Home: () => Node = ({navigation}) => {
   );
 };
 
-const Footer:()=>Node=()=>{
-  return(
-    <ScrollView style = {{backgroundColor:'black', marginTop:40, padding:20}}>
-          <View style={{flex:1, flexDirection:"row", justifyContent:"space-around"}}>
-            <View>
-                  <TouchableOpacity onPress={() => Linking.openURL('https://www.facebook.com')}> 
-                  <Icon name="facebook" size={40} color='#3B5998'/>
-                </TouchableOpacity ></View>
-                <View>
-                  <TouchableOpacity onPress={() => Linking.openURL('https://www.twitter.com')}> 
-                  <Icon name="twitter" size={40} color='#00ACEE'/>
-                </TouchableOpacity ></View>
-                <View>
-                  <TouchableOpacity onPress={() => Linking.openURL('https://www.linkedin.com')}> 
-                  <Icon name="linkedin" size={40} color='#0E76A8'/>
-                </TouchableOpacity ></View>
-          </View>
-      </ScrollView>
-  )
-}
-
-const User:()=>Node=()=> {
-  const { isLoading, error, data } = useQuery('name', () =>
-    fetch('https://my-json-server.typicode.com/Fragkou-Dimitra/demo/profile').then(res =>
-      res.json() 
-    )
-  )
-  if (isLoading) return <Text>'Loading...'</Text> 
-  if (error) return <Text>'An error has occurred: '  {error.message}</Text>
-  return (
-    <View>    
-      <Text h1>{data.name}{' '}</Text>
-      <Text style={{color:'blue'}}>{data.email}{' '}</Text>
-    </View>
-  )
-}
 
 const Tasks:()=>Node=({navigation})=> {
   const queryClient = new QueryClient();
   return (
-    <ScrollView>
+   
+    <ScrollView horizontal={false}>
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={[styles.sectionContainer, styles.sectionTitle]}>Task-list</Text>
       <QueryClientProvider client={queryClient}>
         <ToDoList />
       </QueryClientProvider>
     </View>
+    
   <Footer/></ScrollView>
   );
 }
@@ -184,22 +164,19 @@ const ToDoList:()=>Node=()=> {
   return (
     <View style={styles.listContainer}>
         {isLoading ? <ActivityIndicator/> : (
-          <FlatList style={styles.flatListContainer}
+          <FlatList scrollEnabled={true} nestedScrollEnabled={true} style={styles.flatListContainer }
             data={data}
-            keyExtractor={({ id }, status) => {id}}            
+            keyExtractor={({ id }) => id}            
             renderItem={({ item }) => (
               <View style={styles.row}>
                 <View style={styles.row_cell_title}><Text style={styles.row_title}>{item.title}{' : '}</Text></View>          
                 <View style={styles.row_cell_status}>{item.status=='done'?
-                ( 
-                  <View><Icon name="check" size={40} color='black' />
-                
-                </View>):
-                (<View >  
-                  <View><Icon name="star" size={40} color='red'/>
-                  <TouchableOpacity onPress={() => setStatus(statusIndicator1) }> 
+                (<View><Icon name="check" size={40} color='black' /></View>):
+                (<View>
+                  <Icon name="star" size={40} color='red'/>
+                  {/*<TouchableOpacity onPress={() => setStatus(statusIndicator1) }> 
                     <Text style = {styles.doneButton}>done</Text>
-                </TouchableOpacity ></View>
+                </TouchableOpacity >*/}
                 </View>)}
                 </View> 
               </View>
@@ -213,7 +190,7 @@ const ToDoList:()=>Node=()=> {
 const DrawerContent=(props):Node=> {
   
   return(
-      <View style={{flex:1, backgroundColor:'black'}}>
+      <View style={{flex:1,height:10, backgroundColor:'black'}}>
           <DrawerContentScrollView {...props} >
               <View style={styles.drawerContent}>                
                       <DrawerItem  //{...props} activeTintColor='blue' activeBackgroundColor='rgba(250, 250, 250, .04)'
@@ -226,9 +203,7 @@ const DrawerContent=(props):Node=> {
                             itemsContainerStyle: {
                               marginVertical: 0,
                             }}
-                            
-                          }
-                      />
+                          }/>
                       <DrawerItem 
                           icon={({color, size}) => (<Icon name="calendar" color={color} size={size}/>)}
                           label="My Tasks"
@@ -238,6 +213,28 @@ const DrawerContent=(props):Node=> {
           </DrawerContentScrollView>
       </View>
   );
+}
+
+const Footer:()=>Node=()=>{
+  return(
+   <SafeAreaView>
+    <View style = {{backgroundColor:'black', marginTop:40, padding:20}}>
+          <View style={{flex:1, flexDirection:"row", justifyContent:"space-around"}}>
+            <View>
+                  <TouchableOpacity onPress={() => Linking.openURL('https://www.facebook.com')}> 
+                  <Icon name="facebook" size={20} color='#3B5998'/>
+                </TouchableOpacity ></View>
+                <View>
+                  <TouchableOpacity onPress={() => Linking.openURL('https://www.twitter.com')}> 
+                  <Icon name="twitter" size={20} color='#00ACEE'/>
+                </TouchableOpacity ></View>
+                <View>
+                  <TouchableOpacity onPress={() => Linking.openURL('https://www.linkedin.com')}> 
+                  <Icon name="linkedin" size={20} color='#0E76A8'/>
+                </TouchableOpacity ></View>
+          </View>
+      </View></SafeAreaView>
+  )
 }
 
 
